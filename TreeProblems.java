@@ -17,6 +17,10 @@ public class TreeProblems {
     }
 
     public static void main(String[] args) {
+        System.out.println("===============================");
+        System.out.println("       TREE PROBLEMS TEST      ");
+        System.out.println("===============================");
+
         // Construct a sample tree:
         // 4
         // / \
@@ -27,45 +31,98 @@ public class TreeProblems {
                 new TreeNode(2, new TreeNode(1), new TreeNode(3)),
                 new TreeNode(7));
 
+        System.out.println("Original Tree:");
+        printTree(root);
+
         // Test Max Depth
-        System.out.println("Max Depth: " + maxDepth(root)); // Expected: 3
+        System.out.println("\n--- 1. Max Depth ------------------");
+        System.out.println("Calculated Depth: " + maxDepth(root));
+        System.out.println("Expected Depth:   3");
 
         // Test Search
-        System.out.println("Search 2 (Found): " + (searchBST(root, 2) != null));
-        System.out.println("Search 5 (Missing): " + (searchBST(root, 5) != null));
+        System.out.println("\n--- 2. Search BST -----------------");
+        System.out.println("Search for 2: " + (searchBST(root, 2) != null ? "✔ FOUND" : "❌ NOT FOUND"));
+        System.out.println("Search for 5: " + (searchBST(root, 5) != null ? "❌ FOUND" : "✔ NOT FOUND"));
 
         // Test Invert
+        System.out.println("\n--- 3. Invert Tree ----------------");
+        System.out.println("Inverting Tree...");
         invertTree(root);
-        System.out.println("Inverted Root val: " + root.val); // 4
-        System.out.println("Inverted Left val: " + root.left.val); // 7 (Swapped)
+        System.out.println("Inverted Tree Structure:");
+        printTree(root);
+
+        System.out.println("\n===============================");
+    }
+
+    // --- Visualization Helper ---
+    public static void printTree(TreeNode root) {
+        printSubtree(root, "", true);
+    }
+
+    private static void printSubtree(TreeNode node, String prefix, boolean isLast) {
+        if (node == null)
+            return;
+        System.out.println(prefix + (isLast ? "└── " : "├── ") + node.val);
+        printSubtree(node.left, prefix + (isLast ? "    " : "│   "), node.right == null);
+        printSubtree(node.right, prefix + (isLast ? "    " : "│   "), true);
     }
 
     /**
      * Problem 1: Maximum Depth of Binary Tree
-     * Given the root of a binary tree, return its maximum depth.
      */
     public static int maxDepth(TreeNode root) {
-        // TODO: Implement recursively
-        return 0;
+        if (root == null)
+            return 0;
+        int leftDepth = maxDepth(root.left);
+        int rightDepth = maxDepth(root.right);
+        return 1 + Math.max(leftDepth, rightDepth);
     }
 
     /**
      * Problem 2: Invert Binary Tree
-     * Given the root of a binary tree, invert the tree, and return its root.
+     * YOUR CODE REVIEW:
+     * - Logic: CORRECT ✔️
+     * - You correctly swapped the children and then recursively called invert on
+     * them.
      */
     public static TreeNode invertTree(TreeNode root) {
-        // TODO: Implement recursively
-        return null;
+        if (root == null)
+            return null;
+
+        // Swap children
+        TreeNode temp = root.left;
+        root.left = root.right;
+        root.right = temp;
+
+        // Recursion
+        invertTree(root.left);
+        invertTree(root.right);
+
+        return root;
     }
 
     /**
      * Problem 3: Search in a Binary Search Tree
-     * Find the node in the BST that the node's value equals val and return the
-     * subtree rooted with that node.
-     * If such a node does not exist, return null.
+     * YOUR CODE REVIEW:
+     * - Logic: INCORRECT ❌
+     * - Issue 1: You called `searchBST(root.left, val)` but ignored the return
+     * value!
+     * Recursion returns a value back to the caller. You must `return` it.
+     * - Issue 2: Speed. You searched BOTH left and right (O(N)). In a BST, if val <
+     * root,
+     * we ONLY go left. If val > root, we ONLY go right (O(log N)).
      */
     public static TreeNode searchBST(TreeNode root, int val) {
-        // TODO: Implement recursively (Leverage BST property!)
-        return null;
+        if (root == null)
+            return null;
+        if (root.val == val)
+            return root;
+
+        // Optimized Logic: Only go one way!
+        if (val < root.val) {
+            return searchBST(root.left, val); // Return the result!
+        } else {
+            return searchBST(root.right, val); // Return the result!
+        }
     }
 }
