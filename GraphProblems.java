@@ -36,8 +36,8 @@ public class GraphProblems {
      * Add an undirected edge between u and v.
      */
     public static void addEdge(int u, int v) {
-        graph.get(u).add(v);
-        graph.get(v).add(u);
+        graph.computeIfAbsent(u, k -> new ArrayList<>()).add(v);
+        graph.computeIfAbsent(v, k -> new ArrayList<>()).add(u);
     }
 
     /**
@@ -46,20 +46,22 @@ public class GraphProblems {
      * Hint: Use a Queue and a Set for visited nodes.
      */
     public static void bfs(int start) {
-        // TODO: Implement BFS
-        // 1. Queue<Integer> q = ...
-        // 2. Set<Integer> visited = ...
         Queue<Integer> q = new ArrayDeque<>();
         Set<Integer> visited = new HashSet<>();
+
+        // Initialize BFS
         q.add(start);
         visited.add(start);
+
         while (!q.isEmpty()) {
-            int curr = q.remove();
-            System.out.print(curr + " ");
-            for (int neighbor : graph.get(curr)) {
+            int current = q.poll();
+            System.out.println(current);
+
+            // Traverse neighbors
+            for (int neighbor : graph.get(current)) {
                 if (!visited.contains(neighbor)) {
                     q.add(neighbor);
-                    visited.add(neighbor);
+                    visited.add(neighbor); // mark visited when enqueued
                 }
             }
         }
@@ -71,7 +73,16 @@ public class GraphProblems {
      * Hint: Recursion! If src == dst, return true. Else, check neighbors.
      */
     public static boolean hasPath(int src, int dst, Set<Integer> visited) {
-        // TODO: Implement DFS
+        if (src == dst)
+            return true;
+        visited.add(src);
+        for (int neighbor : graph.get(src)) {
+            if (!visited.contains(neighbor)) {
+                if (hasPath(neighbor, dst, visited)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
