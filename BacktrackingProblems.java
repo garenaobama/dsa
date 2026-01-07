@@ -12,7 +12,7 @@ public class BacktrackingProblems {
 
         // Test Permutations
         System.out.println("\n--- Permutations ---");
-        int[] nums2 = { 1, 2, 3 };
+        int[] nums2 = { 1, 2, 3, 4 };
         System.out.println("Input: " + Arrays.toString(nums2));
         System.out.println("Output: " + permute(nums2));
         // Expected: [[1,2,3], [1,3,2], [2,1,3], [2,3,1], [3,1,2], [3,2,1]]
@@ -64,8 +64,7 @@ public class BacktrackingProblems {
      */
     public static List<List<Integer>> permute(int[] nums) {
         List<List<Integer>> result = new ArrayList<>();
-        // TODO: Implement backtracking
-        // backtrackPermute(nums, new ArrayList<>(), new boolean[nums.length], result);
+        backtrackPermute(nums, new ArrayList<>(), new boolean[nums.length], result);
         return result;
     }
 
@@ -74,10 +73,23 @@ public class BacktrackingProblems {
             List<List<Integer>> result) {
         // TODO: Implement this helper
         // 1. Base case: if current.size() == nums.length, add to result.
+        if (current.size() == nums.length) {
+            result.add(new ArrayList<>(current));
+            return;
+        }
         // 2. For each element in nums:
-        // a. Skip if already used.
-        // b. CHOOSE: Mark as used, add to current.
-        // c. EXPLORE: Recurse.
-        // d. UNCHOOSE: Mark as unused, remove from current.
+        for (int i = 0; i < nums.length; i++) {
+            // a. Skip if already used.
+            if (used[i])
+                continue;
+            // b. CHOOSE: Mark as used, add to current.
+            current.add(nums[i]);
+            used[i] = true;
+            // c. EXPLORE: Recurse.
+            backtrackPermute(nums, current, used, result);
+            // d. UNCHOOSE: Mark as unused, remove from current.
+            current.remove(current.size() - 1);
+            used[i] = false;
+        }
     }
 }
