@@ -73,8 +73,22 @@ public class BacktrackingPractice2 {
      */
     public static List<List<Integer>> subsetsWithDup(int[] nums) {
         List<List<Integer>> result = new ArrayList<>();
-        // TODO: Implement this
+        backtrackSubset(nums, 0, new ArrayList<>(), result);
         return result;
+    }
+
+    private static void backtrackSubset(int[] nums, int start, List<Integer> current, List<List<Integer>> result) {
+        current.sort(Comparator.naturalOrder());
+
+        if (!result.contains(current)) {
+            result.add(new ArrayList<>(current));
+        }
+
+        for (int i = start; i < nums.length; i++) {
+            current.add(nums[i]);
+            backtrackSubset(nums, i + 1, current, result);
+            current.remove(current.size() - 1);
+        }
     }
 
     /**
@@ -95,8 +109,31 @@ public class BacktrackingPractice2 {
      */
     public static List<List<Integer>> combinationSum2(int[] candidates, int target) {
         List<List<Integer>> result = new ArrayList<>();
-        // TODO: Implement this
+        Arrays.sort(candidates);
+        backtrackCombinationSum(candidates, target, new ArrayList<>(), 0, result);
         return result;
+    }
+
+    private static void backtrackCombinationSum(int[] candidates, int target, List<Integer> current, int start,
+            List<List<Integer>> result) {
+        if (sum(current) == target && !result.contains(current)) {
+            result.add(new ArrayList<>(current));
+            return;
+        }
+
+        for (int i = start; i < candidates.length; i++) {
+            current.add(candidates[i]);
+            backtrackCombinationSum(candidates, target, current, i + 1, result);
+            current.remove(current.size() - 1);
+        }
+    }
+
+    private static int sum(List<Integer> current) {
+        int sum = 0;
+        for (int num : current) {
+            sum += num;
+        }
+        return sum;
     }
 
     /**
